@@ -7,6 +7,9 @@ char grid[3][3] = {
     {'-', '-', '-'}
 };
 
+// Game Type is either 1: Random Easy Mode or 2: Hard Mode
+int game_type = 1;
+
 void print_grid (char grid[3][3]){
 	for (int i = 0; i < 3; i++){
 		for (int j = 0; j < 3; j++){
@@ -17,24 +20,26 @@ void print_grid (char grid[3][3]){
 }
 
 void computer_move(char grid[3][3]){
-	std::random_device rd;
-	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> dist(0, 2); // Range 0–2
+	if (game_type == 1){
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dist(0, 2); // Range 0–2
 
-	int rand_num_one = dist(gen);
-	int rand_num_two = dist(gen);
-	bool retry = true;
+		int rand_num_one = dist(gen);
+		int rand_num_two = dist(gen);
+		bool retry = true;
 
-	while(retry){
-		if (grid[rand_num_one][rand_num_two] == '-'){
-			grid[rand_num_one][rand_num_two] = 'o';
-			retry = false;
-		} else {
-			rand_num_one = dist(gen);
-			rand_num_two = dist(gen);
-			retry = true;
+		while(retry){
+			if (grid[rand_num_one][rand_num_two] == '-'){
+				grid[rand_num_one][rand_num_two] = 'o';
+				retry = false;
+			} else {
+				rand_num_one = dist(gen);
+				rand_num_two = dist(gen);
+				retry = true;
+			}
 		}
-	}
+	} 
 	print_grid(grid);
 }
 
@@ -97,6 +102,24 @@ bool is_game_finished (char grid[3][3]){
 }
 
 int main () {
+
+	while (true) {
+        std::cout << "Hi, what game would you like?\n";
+        std::cout << "1: Easy Mode\n";
+        std::cout << "2: Hard Mode\n";
+        std::cout << "Enter the option (1 or 2): ";
+
+        std::cin >> game_type;
+
+        if (std::cin.fail() || (game_type != 1 && game_type != 2)) {
+            std::cin.clear(); // Clear the fail state
+            std::cin.ignore(1000, '\n'); // Discard bad input
+            std::cout << "Invalid input. Please enter 1 or 2.\n\n";
+        } else {
+            break; // Valid input, exit loop
+        }
+    }
+
 	print_grid(grid);
 	while( !check_win(grid) ){
 		accept_move(grid);
